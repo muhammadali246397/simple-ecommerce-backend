@@ -3,7 +3,7 @@ const app = express()
 const cors = require('cors')
 require('dotenv').config();
 const port = process.env.PORT || 3000
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
 app.use(express.json());
 app.use(cors());
@@ -40,6 +40,21 @@ async function run() {
                 err:error
                })
             }
+        })
+
+        app.get('/products/:id',async(req, res) => {
+           try{
+            const id = req.params.id
+            const query = {_id:new ObjectId(id)}
+            const result = await productCollection.findOne(query)
+            res.send(result)
+           }catch(error){
+            res.status(500).json({
+                success:false,
+                message:"something went worng",
+                err:error.message
+               })
+           }
         })
 
 
