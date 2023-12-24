@@ -34,28 +34,49 @@ async function run() {
                 const result = await productCollection.find().toArray()
                 res.send(result)
             } catch (error) {
-               res.status(500).json({
-                success:false,
-                message:"something went worng",
-                err:error
-               })
+                res.status(500).json({
+                    success: false,
+                    message: "something went worng",
+                    err: error
+                })
             }
         })
 
-        app.get('/products/:id',async(req, res) => {
-           try{
-            const id = req.params.id
-            const query = {_id:new ObjectId(id)}
-            const result = await productCollection.findOne(query)
-            res.send(result)
-           }catch(error){
-            res.status(500).json({
-                success:false,
-                message:"something went worng",
-                err:error.message
-               })
-           }
+        app.get('/products/:id', async (req, res) => {
+            try {
+                const id = req.params.id
+                const query = { _id: new ObjectId(id) }
+                const result = await productCollection.findOne(query)
+                res.send(result)
+            } catch (error) {
+                res.status(500).json({
+                    success: false,
+                    message: "something went worng",
+                    err: error.message
+                })
+            }
         })
+
+        app.post('/users', async(req,res) => {
+            const user = req.body;
+            const query = { Email:user.Email}
+            const exestingUser = await userCollection.findOne(query)
+            if(exestingUser){
+              return res.send({message:'user allready added'})
+            }
+            const result =await userCollection.insertOne(user);
+            res.send(result)
+          })
+
+
+
+        let cart = [];
+
+        app.post('/cart', (req, res) => {
+            const { product } = req.body;
+            cart.push(product); 
+            res.json({ cart });
+        });
 
 
 
